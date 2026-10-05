@@ -1,22 +1,14 @@
-<!doctype html>
-<html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Admin Lokasi</title><style>
-body{font-family:Arial;margin:0;background:#f5f7fb;color:#172033}.wrap{max-width:1000px;margin:30px auto;padding:18px}.card{background:#fff;padding:20px;border-radius:16px;box-shadow:0 5px 20px #0001}button{padding:10px 15px;border:0;border-radius:8px;background:#1769e0;color:white}table{width:100%;border-collapse:collapse;margin-top:15px}th,td{padding:10px;border-bottom:1px solid #eee;text-align:left;font-size:14px}@media(max-width:700px){table{font-size:12px}.wrap{padding:8px}}
-</style></head><body><div class="wrap"><div class="card">
-<h2>Admin — Lokasi yang Dibagikan</h2><p>Data hanya berasal dari pengguna yang memberikan izin lokasi.</p>
-<button onclick="load()">Muat Data</button><div id="out"></div></div></div>
-<script>
-const API_URL="https://script.google.com/macros/s/AKfycbwVQ1aGU6WsJkPppCfYKmC6wCCQM_YMuH05OUqsRtYVLQlv8Fozeo15-uTtFaTj25CjvA/exec";
-async function load(){
- const o=document.getElementById("out");
- if(API_URL.startsWith("GANTI_")){o.innerHTML="<p>Isi URL Apps Script terlebih dahulu.</p>";return}
- o.innerHTML="Memuat...";
- try{
-  const r=await fetch(API_URL+"?action=list"); const d=await r.json();
-  if(!d.length){o.innerHTML="<p>Belum ada data.</p>";return}
-  let h="<table><tr><th>Waktu</th><th>Latitude</th><th>Longitude</th><th>Akurasi</th><th>Peta</th></tr>";
-  d.reverse().forEach(x=>{h+=`<tr><td>${x.timestamp}</td><td>${x.latitude}</td><td>${x.longitude}</td><td>${Math.round(x.accuracy||0)} m</td><td><a target="_blank" href="https://www.google.com/maps?q=${x.latitude},${x.longitude}">Google Maps</a></td></tr>`});
-  o.innerHTML=h+"</table>";
- }catch(e){o.innerHTML="<p>Gagal memuat data.</p>"}
-}
+<!doctype html><html lang="id"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Triv — Admin</title><style>
+body{font-family:Arial;margin:0;background:#07111f;color:#eaf2ff}.wrap{max-width:1100px;margin:auto;padding:20px}.card{background:#0e1b2d;padding:20px;border-radius:16px;margin-bottom:18px;box-shadow:0 8px 30px #0005}input,select{box-sizing:border-box;width:100%;padding:11px;margin:6px 0;border-radius:9px;border:1px solid #29415f;background:#091522;color:#fff}button{padding:10px 15px;border:0;border-radius:9px;background:#1769e0;color:#fff;margin:4px;cursor:pointer}.bad{background:#a92828}.ok{background:#198754}.muted{color:#9fb1c7}table{width:100%;border-collapse:collapse;margin-top:12px}th,td{padding:10px;border-bottom:1px solid #21334a;text-align:left;font-size:13px}#login{max-width:420px;margin:8vh auto}.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}@media(max-width:760px){.grid{grid-template-columns:1fr}table{display:block;overflow:auto;white-space:nowrap}}</style></head><body>
+<div class="wrap" id="login"><div class="card"><h2>Triv Admin</h2><p class="muted">Kelola deposit dan withdrawal anggota.</p><input id="email" value="admin@triv.web.id"><input id="pass" type="password" placeholder="Password"><button onclick="login()">Masuk</button><div id="msg"></div></div></div>
+<div class="wrap" id="app" style="display:none"><div class="card"><h2>Dashboard Admin</h2><button onclick="loadData()">Refresh</button><button class="bad" onclick="logout()">Keluar</button><span id="status" class="muted"></span></div><div class="grid"><div class="card"><h3>Deposit Menunggu</h3><div id="deposits"></div></div><div class="card"><h3>Withdrawal Menunggu</h3><div id="withdrawals"></div></div></div></div>
+<script>const API_URL="https://script.google.com/macros/s/AKfycbwVQ1aGU6WsJkPppCfYKmC6wCCQM_YMuH05OUqsRtYVLQlv8Fozeo15-uTtFaTj25CjvA/exec";let token="";
+function esc(x){return String(x??"").replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
+async function api(q){const r=await fetch(API_URL+"?"+new URLSearchParams(q));return r.json()}
+async function login(){const m=document.getElementById('msg');m.textContent='Memproses...';try{const d=await api({action:'admin_login',email:email.value,password:pass.value});if(!d.ok){m.textContent=d.error;return}token=d.token;loginBox(false);loadData()}catch(e){m.textContent='Gagal terhubung ke Apps Script.'}}
+function loginBox(show){document.getElementById('login').style.display=show?'block':'none';document.getElementById('app').style.display=show?'none':'block'}
+async function loadData(){const d=await api({action:'admin_data',token});if(!d.ok){alert(d.error);loginBox(true);return}document.getElementById('status').textContent=' Terakhir diperbarui '+new Date().toLocaleString('id-ID');render('deposits',d.deposits,true);render('withdrawals',d.withdrawals,false)}
+function render(id,arr,isDep){if(!arr.length){document.getElementById(id).innerHTML='<p class="muted">Tidak ada transaksi pending.</p>';return}let h='<table><tr><th>ID</th><th>Anggota</th><th>Detail</th><th>Aksi</th></tr>';arr.forEach(x=>{let detail=isDep?`${esc(x.bank)}<br>Rp ${Number(x.amount||0).toLocaleString('id-ID')}<br>${esc(x.reference)}`:`${esc(x.bank)}<br>${esc(x.accountNumber)}<br>${esc(x.accountHolder)}<br>Rp ${Number(x.amount||0).toLocaleString('id-ID')}`;h+=`<tr><td>${esc(x.id)}</td><td>${esc(x.email)}</td><td>${detail}</td><td><button class="ok" onclick="review('${esc(x.id)}','${isDep?'deposit':'withdrawal'}','approve')">Setujui</button><button class="bad" onclick="review('${esc(x.id)}','${isDep?'deposit':'withdrawal'}','reject')">Tolak</button></td></tr>`});document.getElementById(id).innerHTML=h+'</table>'}
+async function review(id,type,decision){if(!confirm((decision==='approve'?'Setujui':'Tolak')+' transaksi '+id+'?'))return;const d=await api({action:'admin_review',token,id,type,decision});if(!d.ok)alert(d.error);else loadData()}
+async function logout(){await api({action:'admin_logout',token});token='';loginBox(true)}
 </script></body></html>

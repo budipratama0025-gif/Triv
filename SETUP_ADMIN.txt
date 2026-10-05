@@ -1,0 +1,25 @@
+TRIV ADMIN SYSTEM — VERSI GABUNGAN
+
+File:
+- Code.gs: backend lokasi + admin deposit/withdrawal.
+- admin.html: dashboard admin.
+
+Pemasangan:
+1. Buka project Google Apps Script yang dipakai URL /exec Triv.
+2. Backup Code.gs lama.
+3. Ganti Code.gs dengan Code.gs dari paket ini.
+4. Simpan lalu jalankan fungsi setup() sekali untuk membuat sheet.
+5. Izinkan akses Google Sheets saat diminta.
+6. Deploy > Manage deployments > Web app.
+   Execute as: Me
+   Who has access: Anyone
+7. Jika URL /exec berubah, ubah API_URL di admin.html.
+8. Upload admin.html ke repo Triv.
+9. Login admin:
+   Email: admin@triv.web.id
+   Password: TrivAdmin@2026!
+
+Catatan keamanan:
+- Ganti password admin sebelum dipakai sungguhan.
+- Approval withdrawal hanya mengubah status internal dan saldo; tidak melakukan transfer bank otomatis.
+- Transfer bank nyata memerlukan payment gateway/bank API yang sah.
