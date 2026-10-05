@@ -1,0 +1,25 @@
+const ASSETS={BTC:{name:"Bitcoin",price:1850000000},ETH:{name:"Ethereum",price:58000000},USDT:{name:"Tether",price:16800}};
+let state=JSON.parse(localStorage.getItem("trivDemo")||"null")||{user:null,side:"BUY",asset:"BTC",balances:{IDR:10000000,BTC:0,ETH:0,USDT:0},history:[]};
+function save(){localStorage.setItem("trivDemo",JSON.stringify(state));render()}
+function rupiah(n){return "Rp "+Math.round(n).toLocaleString("id-ID")}
+function render(){
+ document.getElementById("heroBalance").textContent=rupiah(state.balances.IDR);
+ document.getElementById("marketGrid").innerHTML=Object.entries(ASSETS).map(([s,a])=>`<div class="market-card" onclick="selectAsset('${s}')"><div class="coin"><b>${s}</b><small>${a.name}</small></div><div class="market-price">${rupiah(a.price)}</div><div class="up">▲ +2.4% demo</div></div>`).join("");
+ document.getElementById("walletGrid").innerHTML=[["IDR",state.balances.IDR],...Object.keys(ASSETS).map(s=>[s,state.balances[s]])].map(([s,b])=>`<div class="wallet"><div class="sym">${s}</div><div class="bal">${s==="IDR"?rupiah(b):Number(b).toFixed(8)}</div><div class="muted">${s==="IDR"?"Rupiah Demo":ASSETS[s].name}</div></div>`).join("");
+ document.getElementById("historyBody").innerHTML=state.history.length?state.history.slice().reverse().map(x=>`<tr><td>${x.time}</td><td>${x.type}</td><td>${x.asset}</td><td>${x.amount}</td><td><span class="status">Berhasil (Demo)</span></td></tr>`).join(""):`<tr><td colspan="5" class="muted">Belum ada transaksi.</td></tr>`;
+ document.getElementById("authArea").innerHTML=state.user?`<span style="color:#91a4ad;margin-right:10px">👤 ${state.user.name}</span><button class="btn ghost" onclick="logout()">Keluar</button>`:`<button class="btn ghost" onclick="openAuth('login')">Masuk</button><button class="btn primary" onclick="openAuth('register')">Daftar</button>`;
+ selectAsset(state.asset,false); setSide(state.side,false);
+}
+function selectAsset(s,saveIt=true){state.asset=s;let a=ASSETS[s];document.getElementById("selectedName").textContent=a.name;document.getElementById("selectedPair").textContent=s+"/IDR";document.getElementById("selectedPrice").textContent=rupiah(a.price);document.getElementById("assetSelect").value=s;calcQty();if(saveIt)save()}
+function calcQty(){let a=ASSETS[state.asset];let n=Number(document.getElementById("amount").value||0);document.getElementById("qty").textContent=(n/a.price).toFixed(8)+" "+state.asset}
+function setSide(side,saveIt=true){state.side=side;document.getElementById("buyTab").classList.toggle("active",side==="BUY");document.getElementById("sellTab").classList.toggle("active",side==="SELL");document.getElementById("sideLabel").textContent=side==="BUY"?"Beli":"Jual";if(saveIt)save()}
+function placeOrder(){if(!state.user){openAuth("register");return}let idr=Number(document.getElementById("amount").value||0),s=state.asset,p=ASSETS[s].price,q=idr/p;if(idr<1000)return alert("Minimal transaksi demo Rp1.000.");if(state.side==="BUY"){if(state.balances.IDR<idr)return alert("Saldo IDR demo tidak cukup.");state.balances.IDR-=idr;state.balances[s]+=q}else{if(state.balances[s]<q)return alert("Saldo crypto demo tidak cukup.");state.balances[s]-=q;state.balances.IDR+=idr}state.history.push({time:new Date().toLocaleString("id-ID"),type:state.side==="BUY"?"BELI":"JUAL",asset:s,amount:rupiah(idr)+" / "+q.toFixed(8)+" "+s});save();alert("Order berhasil diproses sebagai SIMULASI.");}
+function demoDeposit(){if(!state.user)return openAuth("register");let n=Number(prompt("Jumlah deposit IDR demo:","1000000"));if(n>0){state.balances.IDR+=n;state.history.push({time:new Date().toLocaleString("id-ID"),type:"DEPOSIT",asset:"IDR",amount:rupiah(n)});save()}}
+function demoWithdraw(){if(!state.user)return openAuth("register");let n=Number(prompt("Jumlah withdrawal IDR demo:","500000"));if(n>0&&n<=state.balances.IDR){state.balances.IDR-=n;state.history.push({time:new Date().toLocaleString("id-ID"),type:"WITHDRAWAL",asset:"IDR",amount:rupiah(n)});save()}else alert("Saldo demo tidak cukup.")}
+function resetDemo(){if(confirm("Reset semua data demo?")){localStorage.removeItem("trivDemo");location.reload()}}
+let authMode="register";
+function openAuth(mode){authMode=mode;document.getElementById("authModal").classList.add("show");document.getElementById("authTitle").textContent=mode==="register"?"Daftar akun":"Masuk";document.getElementById("name").style.display=mode==="register"?"block":"none";document.getElementById("switchText").innerHTML=mode==="register"?'Sudah punya akun? <b onclick="openAuth(\'login\')">Masuk</b>':'Belum punya akun? <b onclick="openAuth(\'register\')">Daftar</b>'}
+function closeAuth(){document.getElementById("authModal").classList.remove("show")}
+function submitAuth(){let name=document.getElementById("name").value.trim(),email=document.getElementById("email").value.trim();if(!email)return alert("Masukkan email demo.");if(authMode==="register"&&!name)return alert("Masukkan nama.");state.user={name:name||email.split("@")[0],email};closeAuth();save();alert("Akun demo berhasil dibuat. Saldo awal Rp10.000.000.");}
+function logout(){state.user=null;save()}
+render();
