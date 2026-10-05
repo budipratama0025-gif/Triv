@@ -1,249 +1,36 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>triv — Trading</title>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bagikan Lokasi</title>
 <style>
-:root{--bg:#061728;--panel:#0b2033;--panel2:#0e2941;--line:#183a56;--text:#f4f7fb;--muted:#91a7bb;--blue:#168cff;--blue2:#0e6fe5;--green:#08c98b;--red:#f34b68;--yellow:#ffb21d;--shadow:0 12px 35px rgba(0,0,0,.25)}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;font-size:14px}button,input,select{font:inherit}button{cursor:pointer;border:0}.hidden{display:none!important}.app{min-height:100vh}.top{height:62px;background:#071b2d;border-bottom:1px solid var(--line);display:flex;align-items:center;padding:0 18px;gap:22px;position:sticky;top:0;z-index:20}.logo{font-size:25px;font-weight:900;color:#1e8dff;letter-spacing:-1.5px}.logo span{display:inline-block}.nav{display:flex;gap:22px;align-items:center;flex:1}.nav button,.side button{background:none;color:#c2d0dc}.nav button.active,.nav button:hover{color:#fff}.top-actions{display:flex;align-items:center;gap:10px}.iconbtn,.profilebtn,.currency{background:#0c2a43;color:#d9e7f2;border:1px solid var(--line);border-radius:10px;padding:9px 11px}.profilebtn{display:flex;align-items:center;gap:8px}.avatar{width:24px;height:24px;border-radius:50%;background:#147ef5;display:grid;place-items:center;font-size:11px;font-weight:800}.layout{display:grid;grid-template-columns:180px 1fr;min-height:calc(100vh - 62px)}.side{border-right:1px solid var(--line);padding:18px 10px;background:#071b2d}.side button{width:100%;padding:12px 13px;text-align:left;border-radius:8px;margin-bottom:6px}.side button.active,.side button:hover{background:var(--blue);color:#fff}.main{padding:18px;max-width:1450px;width:100%;margin:auto}.hero{min-height:180px;border-radius:10px;background:radial-gradient(circle at 78% 50%,#16508a 0,#0c3159 34%,#0a2138 75%);padding:28px 30px;position:relative;overflow:hidden}.hero h1{font-size:30px;margin:0 0 8px}.hero h1 span{color:#168cff}.hero p{color:#d1dbe5;max-width:520px;line-height:1.5}.primary{background:var(--blue);color:#fff;border-radius:8px;padding:11px 16px;font-weight:800}.hero-coin{position:absolute;right:11%;top:27px;font-size:86px;color:#ffad13;text-shadow:0 0 35px #f5a40077}.ticks{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin:10px 0}.tick{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:10px;position:relative;overflow:hidden}.tick b{display:block}.tick small{color:#c8d4df}.up{color:var(--green)}.down{color:var(--red)}.spark{height:20px;margin-top:3px;background:linear-gradient(165deg,transparent 40%,#10c999 41%,#10c999 47%,transparent 48%)}.grid{display:grid;grid-template-columns:1.35fr .85fr;gap:10px}.card{background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow)}.card h3{margin:0;font-size:16px}.pad{padding:14px}.portfolio{min-height:270px}.value{font-size:23px;font-weight:850;margin:7px 0}.chart{height:150px;margin-top:15px;background:linear-gradient(to top,rgba(15,137,255,.34),transparent 70%),linear-gradient(175deg,transparent 45%,#128cff 46%,#128cff 48%,transparent 49%);clip-path:polygon(0 100%,0 80%,8% 73%,15% 78%,23% 61%,30% 67%,39% 52%,46% 60%,54% 42%,61% 49%,69% 30%,76% 40%,85% 22%,93% 28%,100% 10%,100% 100%)}.periods{display:flex;gap:7px;margin-top:9px}.periods button{background:#0c2942;color:#a9bac9;border-radius:6px;padding:6px 10px}.periods button.active{background:var(--blue);color:#fff}.assets .asset{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid #15334a}.asset:last-child{border-bottom:0}.coin{width:25px;height:25px;border-radius:50%;display:inline-grid;place-items:center;background:#f59d22;color:#fff;font-size:11px;font-weight:900;margin-right:7px}.coin.eth{background:#7953e6}.coin.usdt{background:#13a77d}.coin.idr{background:#ed4f73}.coin.sol{background:#7c5cff}.trade{margin-top:10px}.tabs{display:flex}.tabs button{flex:1;padding:12px;background:#0b2942;color:#fff}.tabs button.active.buy{background:var(--green)}.tabs button.active.sell{background:var(--red)}.formrow{margin:11px 0}.formrow label{display:block;color:#9eb1c2;font-size:12px;margin-bottom:5px}.inputwrap{display:flex;background:#0c2942;border:1px solid var(--line);border-radius:7px}.inputwrap input,.inputwrap select{width:100%;background:none;border:0;color:#fff;padding:10px;outline:0}.inputwrap button{background:none;color:#20a0ff;padding:0 10px}.full{width:100%;padding:11px;border-radius:7px;font-weight:800}.buybtn{background:var(--green);color:#062019}.sellbtn{background:var(--red);color:#fff}.section{margin-top:10px}.market-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.filters{display:flex;gap:5px;flex-wrap:wrap;margin-top:12px}.filters button{background:#0b2942;color:#b7c7d5;border-radius:6px;padding:6px 10px}.filters button.active{background:var(--blue);color:#fff}.search{background:#0a243b;border:1px solid var(--line);color:#fff;border-radius:7px;padding:9px 11px;outline:0}.table{width:100%;border-collapse:collapse;margin-top:10px;font-size:12px}.table th,.table td{padding:10px 7px;border-bottom:1px solid #14334b;text-align:left;white-space:nowrap}.action{padding:6px 10px;border-radius:6px;color:#fff;margin-right:4px}.action.buy{background:#08b981}.action.sell{background:#a82e4b}.history-item{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid #15334a}.dot{width:11px;height:11px;border-radius:50%;display:inline-block;margin-right:8px;background:var(--green)}.dot.red{background:var(--red)}.modalback{position:fixed;inset:0;background:#0009;z-index:50;display:grid;place-items:center;padding:16px}.modal{width:min(520px,100%);background:#0b2033;border:1px solid var(--line);border-radius:14px;padding:20px;box-shadow:var(--shadow);max-height:90vh;overflow:auto}.modal h2{margin-top:0}.close{float:right;background:#15344d;color:#fff;border-radius:50%;width:32px;height:32px}.modal .input{width:100%;background:#0a2943;border:1px solid var(--line);color:#fff;border-radius:7px;padding:11px;outline:0;margin:5px 0 10px}.profile-menu{position:absolute;right:18px;top:57px;width:260px;background:#0b2033;border:1px solid var(--line);border-radius:10px;box-shadow:var(--shadow);padding:10px;z-index:40}.profile-head{padding:10px;border-bottom:1px solid var(--line);margin-bottom:7px}.profile-menu button{display:block;width:100%;text-align:left;background:none;color:#dce7ef;padding:10px;border-radius:7px}.profile-menu button:hover{background:#123451}.profile-menu .danger{color:#ff5c73}.toast{position:fixed;right:18px;bottom:18px;background:#102e47;color:#fff;border:1px solid #25516f;border-radius:9px;padding:12px 15px;z-index:100;box-shadow:var(--shadow)}.notice{font-size:11px;color:#8095a8;text-align:center;padding:16px}.mobilebar{display:none}
-@media(max-width:900px){.nav{gap:11px}.nav button{font-size:12px}.layout{grid-template-columns:150px 1fr}.ticks{grid-template-columns:repeat(3,1fr)}.grid{grid-template-columns:1fr}.hero-coin{right:5%}}
-@media(max-width:700px){.top{height:55px;padding:0 10px;gap:9px}.nav{display:none}.top-actions{margin-left:auto}.currency{padding:7px}.profilebtn{padding:7px}.profilebtn .pname{display:none}.layout{display:block}.side{display:none}.main{padding:8px}.hero{min-height:170px;padding:22px 17px}.hero h1{font-size:24px}.hero p{font-size:12px;max-width:75%}.hero-coin{font-size:62px;right:4%;top:45px}.ticks{grid-template-columns:repeat(2,1fr)}.tick{font-size:11px}.tick:nth-child(5){grid-column:1/3}.table-wrap{overflow-x:auto}.table{min-width:720px}.mobilebar{position:fixed;display:flex;bottom:0;left:0;right:0;background:#071b2d;border-top:1px solid var(--line);z-index:30;justify-content:space-around;padding:7px}.mobilebar button{background:none;color:#9db0c1;font-size:10px}.mobilebar button.active{color:#20a0ff}.main{padding-bottom:65px}.market-head{align-items:flex-start}.search{width:100%}}
-
-.wallet-page{scroll-margin-top:75px}.wallet-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:10px;margin-top:14px}.wallet-balance,.deposit-summary{background:#0a2943;border:1px solid var(--line);border-radius:9px;padding:14px}.deposit-chart-wrap{margin-top:12px;background:#081e32;border:1px solid var(--line);border-radius:9px;padding:14px}.deposit-chart-wrap svg{width:100%;height:210px;margin-top:8px;background:repeating-linear-gradient(to bottom,transparent 0,transparent 51px,#12344c 52px)}.deposit-actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}.deposit-method{background:#0a2943;border:1px solid var(--line);color:#fff;text-align:left;border-radius:9px;padding:14px;min-height:68px}.deposit-method:hover{border-color:var(--blue);background:#0d3150}.deposit-method small{display:block;color:var(--muted);margin-top:5px}@media(max-width:700px){.wallet-grid{grid-template-columns:1fr}.deposit-actions{grid-template-columns:1fr}.deposit-chart-wrap svg{height:180px}}
+body{font-family:Arial;margin:0;background:#f3f6fa;color:#172033}.box{max-width:520px;margin:50px auto;padding:28px;background:#fff;border-radius:18px;box-shadow:0 8px 30px #0001}button{width:100%;padding:14px;border:0;border-radius:10px;background:#1769e0;color:#fff;font-size:16px}.muted{color:#667085;font-size:14px}.ok{background:#ecfdf3;padding:14px;border-radius:10px}.err{background:#fef2f2;padding:14px;border-radius:10px}a{color:#1769e0}
 </style>
 </head>
-<body>
-<div id="auth" class="modalback">
-  <div class="modal">
-    <div class="logo">triv</div>
-    <h2 id="authTitle">Masuk ke akun</h2>
-    <p style="color:var(--muted)">Gunakan akun  untuk mencoba fitur exchange.</p>
-    <div id="registerFields" class="hidden">
-      <label>Nama lengkap</label><input id="regName" class="input" placeholder="Budi Pratama">
-    </div>
-    <label>Email</label><input id="authEmail" class="input" type="email" placeholder="budi@example.com">
-    <label>Password</label><input id="authPass" class="input" type="password" placeholder="••••••••">
-    <button id="authSubmit" class="primary full">Masuk</button>
-    <p id="authSwitch" style="text-align:center;color:#91a7bb">Belum punya akun? <button style="background:none;color:#1990ff" onclick="toggleAuth()">Daftar</button></p>
-    <div class="notice">Simulasi frontend. Saldo, order, deposit, dan withdrawal hanya tersimpan di browser dan tidak melibatkan uang sungguhan.</div>
-  </div>
+<body><div class="box">
+<h2>Bagikan Lokasi Anda</h2>
+<p>Dengan menekan tombol di bawah, Anda meminta browser mengambil lokasi perangkat Anda. Lokasi hanya dikirim setelah Anda memberikan izin lokasi.</p>
+<button id="btn" onclick="shareLocation()">Izinkan & Bagikan Lokasi</button>
+<div id="status" class="muted" style="margin-top:18px"></div>
 </div>
-<div class="app hidden" id="app">
-<header class="top">
-  <button class="iconbtn" id="mobileMenu">☰</button><div class="logo">triv</div>
-  <nav class="nav"><button data-go="home" class="active">Beranda</button><button data-go="market">Market</button><button data-go="trade">Trade</button><button data-go="wallet">Wallet</button><button data-go="history">Riwayat</button><button data-go="reward">Reward</button><button data-go="help">Bantuan</button></nav>
-  <div class="top-actions"><button class="iconbtn" onclick="showToast('Pencarian siap digunakan')">⌕</button><button class="iconbtn" onclick="showToast('Tidak ada notifikasi baru')">♧</button><button class="currency">IDR⌄</button><button class="profilebtn" id="profileBtn"><span class="avatar" id="avatar">B</span><span class="pname" id="profileName">Budi Pratama</span>⌄</button></div>
-  <div class="profile-menu hidden" id="profileMenu">
-    <div class="profile-head"><b id="menuName">Budi Pratama</b><br><small id="menuEmail">budi@example.com</small><br><span class="up">● Terverifikasi</span></div>
-    <button onclick="openModal('Profil Saya',profileForm())">Profil Saya</button><button onclick="openModal('Keamanan Akun',securityForm())">Keamanan Akun</button><button onclick="showToast('Notifikasi tidak ada')">Notifikasi</button><button onclick="showToast('API tersedia sebagai fitur ')">API (Opsional)</button><button onclick="openModal('Pengaturan',settingsForm())">Pengaturan</button><button class="danger" onclick="logout()">Keluar</button>
-  </div>
-</header>
-<div class="layout">
-<aside class="side" id="sidebar"><button class="active" data-go="home">⌂ &nbsp; Beranda</button><button data-go="market">▥ &nbsp; Market</button><button data-go="trade">⇄ &nbsp; Trade ›</button><button data-go="wallet">▣ &nbsp; Wallet ›</button><button data-go="history">◉ &nbsp; Riwayat</button><button data-go="reward">♧ &nbsp; Reward</button><button data-go="help">? &nbsp; Pusat Bantuan</button></aside>
-<main class="main">
-<section id="home" class="page">
-<div class="hero"><h1>Trading Crypto<br><span>Lebih Mudah & Aman</span></h1><p>Beli, jual dan kelola aset crypto Anda dalam satu platform .</p><button class="primary" onclick="openTrade('BTC','buy')">Mulai Trading →</button><div class="hero-coin">₿</div></div>
-<div class="ticks" id="ticks"></div>
-<div class="grid">
-<div class="card pad portfolio"><div style="display:flex;justify-content:space-between"><h3>Portofolio Saya &nbsp; ◉</h3><button onclick="toggleBalance()" class="iconbtn">◉</button></div><small style="color:var(--muted)">Total Nilai Aset</small><div class="value" id="portfolioValue">Rp 12.450.000</div><span class="up">+2,45%</span> <small style="color:var(--muted)">(24 Jam)</small><div class="chart"></div><div class="periods"><button class="active">1D</button><button>1W</button><button>1M</button><button>1Y</button><button>ALL</button></div></div>
-<div class="card pad assets" id="walletAssets"><div style="display:flex;justify-content:space-between"><h3>Saldo Aset</h3><button onclick="openWallet()" style="background:none;color:#1691ff">Lihat Semua</button></div><div id="assetList"></div></div>
-</div>
-<div class="grid section">
-<div class="card pad" id="market"><div class="market-head"><h3>▣ Market Crypto</h3><input id="search" class="search" placeholder="⌕ Cari aset crypto..."></div><div class="filters" id="filters"></div><div class="table-wrap"><table class="table"><thead><tr><th>#</th><th>Nama</th><th>Harga</th><th>Perubahan 24 Jam</th><th>Grafik</th><th>Aksi</th></tr></thead><tbody id="marketRows"></tbody></table></div></div>
-<div>
-<div class="card trade" id="trade"><div class="tabs"><button id="buyTab" class="active buy" onclick="setSide('buy')">Beli</button><button id="sellTab" onclick="setSide('sell')">Jual</button></div><div class="pad"><div class="formrow"><label>Aset</label><div class="inputwrap"><select id="tradeAsset"></select></div></div><div class="formrow"><label>Harga Terakhir</label><b id="lastPrice">Rp 1.850.000.000</b><span id="lastChange" class="up" style="float:right">+1,23%</span></div><div class="formrow"><label id="amountLabel">Jumlah Pembelian (IDR)</label><div class="inputwrap"><input id="amount" type="number" value="100000"><button onclick="maxAmount()">Maks</button></div></div><small id="estimate" style="color:var(--muted)">≈ 0,00005405 BTC</small><button id="tradeBtn" class="full buybtn" style="margin-top:10px" onclick="executeTrade()">Beli BTC</button></div></div>
-<div class="card pad section" id="history"><div style="display:flex;justify-content:space-between"><h3>Transaksi Terbaru</h3><button onclick="openHistory()" style="background:none;color:#1691ff">Lihat Semua</button></div><div id="historyList"></div></div>
-</div></div>
-
-<section id="wallet" class="card pad section wallet-page">
-  <div class="market-head"><div><h3>Wallet</h3><small style="color:var(--muted)">Kelola saldo IDR dan aktivitas dana</small></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="primary" onclick="deposit()">+ Deposit</button><button class="full sellbtn" style="width:auto;padding:10px 16px" onclick="withdraw()">− Withdraw</button></div></div>
-  <div class="wallet-grid">
-    <div class="wallet-balance"><small style="color:var(--muted)">Saldo IDR</small><div class="value" id="walletBalance">Rp 10.000.000</div><div class="up">Saldo tersedia</div></div>
-    <div class="deposit-summary"><small style="color:var(--muted)">Deposit terbaru</small><div class="value" id="depositTotal">Rp 0</div><small style="color:var(--muted)">Total deposit tercatat</small></div>
-    <div class="deposit-summary"><small style="color:var(--muted)">Withdraw terbaru</small><div class="value" id="withdrawTotal">Rp 0</div><small style="color:var(--muted)">Total withdraw tercatat</small></div>
-  </div>
-  <div class="deposit-chart-wrap"><div style="display:flex;justify-content:space-between;align-items:center"><div><b>Aktivitas Saldo</b><br><small style="color:var(--muted)">Pergerakan saldo berdasarkan transaksi terakhir</small></div><div class="periods"><button class="active" type="button">7H</button><button type="button">30H</button><button type="button">ALL</button></div></div>
-    <svg id="depositChart" viewBox="0 0 800 220" role="img" aria-label="Grafik aktivitas saldo" preserveAspectRatio="none"><defs><linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#168cff" stop-opacity=".35"/><stop offset="1" stop-color="#168cff" stop-opacity="0"/></linearGradient></defs><path id="chartArea" fill="url(#areaFill)" d="M0 180 L0 150 L100 135 L200 155 L300 110 L400 125 L500 85 L600 105 L700 65 L800 80 L800 180 Z"/><path id="chartLine" d="M0 150 L100 135 L200 155 L300 110 L400 125 L500 85 L600 105 L700 65 L800 80" fill="none" stroke="#168cff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
-  </div>
-  <div class="deposit-actions"><button class="deposit-method" onclick="depositMethod('Bank Transfer')"><b>🏦 Bank Transfer</b><small>Transfer melalui rekening bank</small></button><button class="deposit-method" onclick="depositMethod('Virtual Account')"><b>▣ Virtual Account</b><small>Dapatkan nomor pembayaran</small></button><button class="deposit-method" onclick="depositMethod('E-Wallet')"><b>◉ E-Wallet</b><small>Pilih metode e-wallet</small></button></div>
-</section>
-
-<div class="card pad section hidden" id="reward"><h3>Reward</h3><p style="color:var(--muted)">Poin : <b id="points">1.250</b>. Selesaikan aktivitas trading  untuk memperoleh poin.</p><button class="primary" onclick="showToast('Reward berhasil diklaim di ')">Klaim Reward</button></div>
-<div class="card pad section hidden" id="help"><h3>Pusat Bantuan</h3><p style="color:var(--muted)">Ini adalah simulator. Gunakan menu Wallet untuk deposit/withdraw  dan Trade untuk order .</p></div>
-</section>
-<div class="notice">SIMULASI FRONTEND — saldo dan transaksi tidak menggunakan uang atau aset crypto sungguhan.</div>
-</main></div>
-<div class="mobilebar"><button data-go="home" class="active">⌂<br>Beranda</button><button data-go="market">▥<br>Market</button><button data-go="trade">⇄<br>Trade</button><button data-go="wallet">▣<br>Wallet</button><button data-go="history">◉<br>Riwayat</button></div>
-</div>
-<div id="modalHost"></div><div id="toastHost"></div>
 <script>
-const coins={
- BTC:{name:'Bitcoin',price:1850000000,change:1.23,dec:8},
- ETH:{name:'Ethereum',price:65000000,change:2.45,dec:8},
- USDT:{name:'Tether',price:16250,change:.12,dec:6},
- SOL:{name:'Solana',price:2450000,change:3.18,dec:6},
- BNB:{name:'BNB',price:8250000,change:.95,dec:6},
- XRP:{name:'XRP',price:12500,change:1.12,dec:6}
-};
-const indodaxPairs={BTC:'btc_idr',ETH:'eth_idr',USDT:'usdt_idr',SOL:'sol_idr',BNB:'bnb_idr',XRP:'xrp_idr'};
-const knownNames={BTC:'Bitcoin',ETH:'Ethereum',USDT:'Tether',SOL:'Solana',BNB:'BNB',XRP:'XRP',ADA:'Cardano',DOGE:'Dogecoin',TRX:'TRON',DOT:'Polkadot',MATIC:'Polygon',POL:'Polygon',AVAX:'Avalanche',LINK:'Chainlink',ATOM:'Cosmos',LTC:'Litecoin',BCH:'Bitcoin Cash',ETC:'Ethereum Classic',NEAR:'NEAR Protocol',APT:'Aptos',ARB:'Arbitrum',OP:'Optimism',SUI:'Sui',SHIB:'Shiba Inu',PEPE:'Pepe',UNI:'Uniswap',AAVE:'Aave',FIL:'Filecoin',ALGO:'Algorand',XLM:'Stellar',EOS:'EOS',XTZ:'Tezos',HBAR:'Hedera',VET:'VeChain',ICP:'Internet Computer',INJ:'Injective',SEI:'Sei',TIA:'Celestia',MKR:'Maker',CRV:'Curve',SAND:'The Sandbox',MANA:'Decentraland',AXS:'Axie Infinity',GALA:'Gala',FTM:'Fantom',EGLD:'MultiversX',RUNE:'THORChain',SNX:'Synthetix',ZIL:'Zilliqa',COMP:'Compound',YFI:'yearn.finance'};
-function prettyCoinName(sym){return knownNames[sym]||sym.charAt(0)+sym.slice(1).toLowerCase()}
-async function refreshMarketFromAPI(){
- try{
-  const r=await fetch('https://indodax.com/api/tickers',{cache:'no-store'});
-  if(!r.ok)throw new Error('API '+r.status);
-  const j=await r.json(), all=j.tickers||j;
-  const next={};
-  for(const [pair,t] of Object.entries(all)){
-   if(!pair.endsWith('_idr')||!t||Number(t.last)<=0)continue;
-   const sym=pair.slice(0,-4).toUpperCase();
-   next[sym]={name:prettyCoinName(sym),price:Number(t.last),change:Number(t.change||t.percent||0),dec:sym==='BTC'||sym==='ETH'?8:6,bid:Number(t.buy||0),ask:Number(t.sell||0),pair};
-  }
-  if(Object.keys(next).length>=5){
-   Object.assign(coins,next);
-   for(const k of Object.keys(coins)) if(!next[k] && !['BTC','ETH','USDT','SOL','BNB','XRP'].includes(k)) delete coins[k];
-  }
-  Object.keys(next).forEach(k=>indodaxPairs[k]=next[k].pair);
-  render();
-  showToast('Market crypto diperbarui');
- }catch(e){console.warn('Indodax public API unavailable',e);showToast('Market menggunakan harga terakhir');}
+const API_URL="https://script.google.com/macros/s/AKfycbwVQ1aGU6WsJkPppCfYKmC6wCCQM_YMuH05OUqsRtYVLQlv8Fozeo15-uTtFaTj25CjvA/exec";
+function shareLocation(){
+ const s=document.getElementById("status"),b=document.getElementById("btn");
+ if(!navigator.geolocation){s.innerHTML='<div class="err">Browser tidak mendukung lokasi.</div>';return}
+ b.disabled=true;s.textContent="Meminta izin lokasi...";
+ navigator.geolocation.getCurrentPosition(async p=>{
+   const data={latitude:p.coords.latitude,longitude:p.coords.longitude,accuracy:p.coords.accuracy,timestamp:new Date().toISOString()};
+   if(API_URL.startsWith("GANTI_")) {
+     s.innerHTML='<div class="ok">Lokasi berhasil diperoleh.<br><a target="_blank" href="https://www.google.com/maps?q='+data.latitude+','+data.longitude+'">Buka di Google Maps</a><br><br>Tambahkan URL Apps Script pada file ini agar data dapat disimpan.</div>'; b.disabled=false; return;
+   }
+   try{
+     await fetch(API_URL,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(data)});
+     s.innerHTML='<div class="ok">Lokasi telah dibagikan sesuai izin Anda.</div>';
+   }catch(e){s.innerHTML='<div class="err">Gagal mengirim lokasi.</div>';b.disabled=false}
+ },e=>{
+   const m={1:"Izin lokasi ditolak.",2:"Lokasi tidak tersedia.",3:"Permintaan lokasi terlalu lama."};
+   s.innerHTML='<div class="err">'+(m[e.code]||"Gagal mendapatkan lokasi.")+"</div>";b.disabled=false;
+ },{enableHighAccuracy:true,timeout:15000,maximumAge:0});
 }
-
-const defaults={idr:10000000,BTC:.0025,ETH:.015,USDT:50,SOL:0,BNB:0,XRP:0};
-const key='trivAppState';
-const blankHistory=[
- {type:'Beli BTC',amount:'Rp 500.000',time:'5 Okt 2026, 19:45',status:'Selesai',dot:'green'},
- {type:'Deposit IDR',amount:'Rp 1.000.000',time:'5 Okt 2026, 12:20',status:'Selesai',dot:'green'},
- {type:'Jual ETH',amount:'Rp 750.000',time:'4 Okt 2026, 18:10',status:'Selesai',dot:'red'},
- {type:'Withdraw USDT',amount:'50 USDT',time:'3 Okt 2026, 14:30',status:'Selesai',dot:'purple'}
-];
-let db=JSON.parse(localStorage.getItem(key)||'null')||{accounts:{},current:null};
-let state=null, side='buy', authMode='login', balanceVisible=true;
-const fmt=n=>new Intl.NumberFormat('id-ID').format(Math.round(n));
-const money=n=>'Rp '+fmt(n);
-function persist(){localStorage.setItem(key,JSON.stringify(db))}
-function accountState(email,name){
- return {user:{name,email},balance:{...defaults},history:blankHistory.map(x=>({...x})),points:1250};
-}
-function init(){
- if(db.current && db.accounts[db.current]){
-   state=db.accounts[db.current];
-   document.getElementById('auth').classList.add('hidden');
-   document.getElementById('app').classList.remove('hidden');
-   render();
- }else{
-   state=null;
-   document.getElementById('auth').classList.remove('hidden');
-   document.getElementById('app').classList.add('hidden');
- }
-}
-function save(){
- if(!state?.user)return;
- db.accounts[state.user.email]=state;
- db.current=state.user.email;
- persist();
-}
-function toggleAuth(){
- authMode=authMode==='login'?'register':'login';
- document.getElementById('authTitle').textContent=authMode==='login'?'Masuk ke akun':'Buat akun';
- document.getElementById('registerFields').classList.toggle('hidden',authMode==='login');
- document.getElementById('authSubmit').textContent=authMode==='login'?'Masuk':'Daftar';
- document.getElementById('authSwitch').innerHTML=authMode==='login'
-  ? `Belum punya akun? <button type="button" style="background:none;color:#1990ff" onclick="toggleAuth()">Daftar</button>`
-  : `Sudah punya akun? <button type="button" style="background:none;color:#1990ff" onclick="toggleAuth()">Masuk</button>`;
-}
-document.getElementById('authSubmit').onclick=()=>{
- const email=document.getElementById('authEmail').value.trim().toLowerCase();
- const pass=document.getElementById('authPass').value;
- const name=(document.getElementById('regName')?.value||'').trim();
- if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){showToast('Masukkan email yang valid');return}
- if(pass.length<4){showToast('Password minimal 4 karakter');return}
- if(authMode==='register'){
-   if(!name){showToast('Masukkan nama');return}
-   if(db.accounts[email]){showToast('Email sudah terdaftar');return}
-   state=accountState(email,name);
-   state.password=pass;
-   save();
-   init();
-   showToast('Akun berhasil dibuat');
- }else{
-   const acc=db.accounts[email];
-   if(!acc || acc.password!==pass){showToast('Email atau password salah');return}
-   state=acc; db.current=email; persist(); init(); showToast('Berhasil masuk');
- }
-};
-function renderDepositChart(){
- const svg=document.getElementById('depositChart'), area=document.getElementById('chartArea'), line=document.getElementById('chartLine');
- if(!svg||!area||!line||!state)return;
- const vals=[state.balance.idr];
- const tx=state.history.slice().reverse();
- let running=state.balance.idr;
- const changes=[];
- tx.forEach(h=>{
-  const n=Number(String(h.amount||'').replace(/[^0-9]/g,''))||0;
-  if(h.type.startsWith('Deposit')) running=Math.max(0,running-n);
-  else if(h.type.startsWith('Withdraw')) running+=n;
-  changes.push(running);
- });
- vals.push(...changes.slice(-12));
- const min=Math.min(...vals), max=Math.max(...vals), range=Math.max(1,max-min);
- const pts=vals.map((v,i)=>[20+i*(760/Math.max(1,vals.length-1)),190-((v-min)/range)*150]);
- const d=pts.map((p,i)=>(i?'L':'M')+p[0].toFixed(1)+' '+p[1].toFixed(1)).join(' ');
- line.setAttribute('d',d);
- area.setAttribute('d',d+' L '+pts[pts.length-1][0].toFixed(1)+' 200 L 20 200 Z');
-}
-function render(){const u=state.user||{name:'Budi Pratama',email:'budi@example.com'};document.getElementById('profileName').textContent=u.name;document.getElementById('menuName').textContent=u.name;document.getElementById('menuEmail').textContent=u.email;document.getElementById('avatar').textContent=u.name[0].toUpperCase();document.getElementById('portfolioValue').textContent=balanceVisible?money(totalValue()):'Rp •••••••';document.getElementById('points').textContent=fmt(state.points);renderTicks();renderAssets();renderMarket();renderHistory();renderSelect();renderWallet();renderDepositChart();}
-function renderWallet(){const bal=document.getElementById('walletBalance');if(bal)bal.textContent=balanceVisible?money(state.balance.idr):'Rp •••••••';let dep=0,wd=0;state.history.forEach(h=>{if(h.type.startsWith('Deposit'))dep+=Number((h.amount||'').replace(/[^0-9]/g,''))||0;if(h.type.startsWith('Withdraw'))wd+=Number((h.amount||'').replace(/[^0-9]/g,''))||0});const d=document.getElementById('depositTotal'),w=document.getElementById('withdrawTotal');if(d)d.textContent=money(dep);if(w)w.textContent=money(wd)}
-function depositMethod(method){openModal('Deposit IDR',`<p style="color:var(--muted)">Metode: <b>${method}</b></p><label>Nominal</label><input id="dep" class="input" type="number" min="1" value="1000000"><button class="full buybtn" onclick="doDeposit()">Lanjutkan Deposit</button>`)}
-function totalValue(){return state.balance.idr+Object.keys(coins).reduce((s,k)=>s+(state.balance[k]||0)*coins[k].price,0)}
-function renderTicks(){document.getElementById('ticks').innerHTML=Object.entries(coins).slice(0,5).map(([k,c])=>`<div class="tick"><b><span class="coin ${k==='ETH'?'eth':k==='USDT'?'usdt':''}">${k[0]}</span>${k}/IDR</b><small>${money(c.price)} <span class="up">+${c.change.toFixed(2).replace('.',',')}%</span></small><div class="spark"></div></div>`).join('')}
-function renderAssets(){
- const base=[['idr','Rupiah','IDR','idr']];
- const cryptoKeys=Object.keys(coins).filter(k=>(state.balance[k]||0)>0).slice(0,8);
- const arr=base.concat(cryptoKeys.map(k=>[k,coins[k].name,k,k==='ETH'?'eth':k==='USDT'?'usdt':k==='SOL'?'sol':'']));
- document.getElementById('assetList').innerHTML=arr.map(([k,n,s,cl])=>{
-  const q=state.balance[k]||0,val=k==='idr'?q:q*coins[k].price;
-  const dec=k==='BTC'?8:6;
-  return `<div class="asset"><span><span class="coin ${cl}">${s.slice(0,1)}</span>${n} (${s})</span><span style="text-align:right"><b>${k==='idr'?money(q):q.toFixed(dec)}</b><br><small style="color:var(--muted)">${money(val)}</small></span></div>`;
- }).join('');
-}
-function renderSelect(){document.getElementById('tradeAsset').innerHTML=Object.keys(coins).map(k=>`<option value="${k}">${coins[k].name} (${k})</option>`).join('');document.getElementById('tradeAsset').onchange=updateTrade;updateTrade()}
-function renderMarket(){const q=(document.getElementById('search')?.value||'').toLowerCase();const filters=document.getElementById('filters');if(filters&&!filters.children.length)filters.innerHTML=['Favorit','Semua','IDR','BTC','ETH','USDT','BNB','SOL'].map((x,i)=>`<button class="${i===1?'active':''}" type="button" data-filter="${x}">${x}</button>`).join('');const rows=Object.entries(coins).filter(([k,c])=>k.toLowerCase().includes(q)||c.name.toLowerCase().includes(q));document.getElementById('marketRows').innerHTML=rows.map(([k,c],i)=>`<tr><td>${i+1}</td><td><b>${c.name}</b> <span style="color:#73899d">${k}</span></td><td>${money(c.price)}</td><td class="up">+${c.change.toFixed(2).replace('.',',')}%</td><td style="color:#14c998;font-size:22px">╱╱</td><td><button class="action buy" onclick="openTrade('${k}','buy')">Beli</button><button class="action sell" onclick="openTrade('${k}','sell')">Jual</button></td></tr>`).join('')}
-function renderHistory(){document.getElementById('historyList').innerHTML=state.history.slice(0,4).map(h=>`<div class="history-item"><span><i class="dot ${h.dot==='red'?'red':''}"></i><b>${h.type}</b><br><small style="color:#7890a4;margin-left:20px">${h.time}</small></span><span style="text-align:right"><b>${h.amount}</b><br><small class="up">${h.status}</small></span></div>`).join('')}
-function setSide(s){side=s;document.getElementById('buyTab').classList.toggle('active',s==='buy');document.getElementById('sellTab').classList.toggle('active',s==='sell');document.getElementById('buyTab').classList.toggle('buy',s==='buy');document.getElementById('sellTab').classList.toggle('sell',s==='sell');document.getElementById('amountLabel').textContent=s==='buy'?'Jumlah Pembelian (IDR)':'Jumlah Penjualan (asset)';updateTrade()}
-function updateTrade(){const k=document.getElementById('tradeAsset').value,c=coins[k];document.getElementById('lastPrice').textContent=money(c.price);document.getElementById('lastChange').textContent='+'+c.change.toFixed(2).replace('.',',')+'%';document.getElementById('tradeBtn').textContent=(side==='buy'?'Beli ':'Jual ')+k;document.getElementById('tradeBtn').className='full '+(side==='buy'?'buybtn':'sellbtn');const a=Number(document.getElementById('amount').value||0);document.getElementById('estimate').textContent=side==='buy'?`≈ ${(a/c.price).toFixed(8)} ${k}`:`≈ ${money(a*c.price)}`}
-function openTrade(k,s){document.getElementById('tradeAsset').value=k;setSide(s);go('trade');setTimeout(()=>document.getElementById('amount').focus(),100)}
-document.getElementById('amount').addEventListener('input',updateTrade);
-document.getElementById('search').addEventListener('input',renderMarket);
-document.getElementById('filters').addEventListener('click',e=>{const b=e.target.closest('button[data-filter]');if(!b)return;document.querySelectorAll('#filters button').forEach(x=>x.classList.remove('active'));b.classList.add('active');const f=b.dataset.filter;if(f==='Semua'||f==='IDR')document.getElementById('search').value='';else if(f==='Favorit')document.getElementById('search').value='BTC';else document.getElementById('search').value=f;renderMarket()});
-function maxAmount(){const k=document.getElementById('tradeAsset').value;if(side==='buy')document.getElementById('amount').value=Math.floor(state.balance.idr);else document.getElementById('amount').value=(state.balance[k]||0).toFixed(8);updateTrade()}
-function executeTrade(){const k=document.getElementById('tradeAsset').value,a=Number(document.getElementById('amount').value||0),c=coins[k];if(a<=0){showToast('Masukkan jumlah');return}if(side==='buy'){const cost=a;if(cost>state.balance.idr){showToast('Saldo IDR tidak cukup');return}state.balance.idr-=cost;state.balance[k]=(state.balance[k]||0)+cost/c.price}else{const qty=a;if(qty>(state.balance[k]||0)){showToast('Saldo aset tidak cukup');return}state.balance[k]-=qty;state.balance.idr+=qty*c.price}state.history.unshift({type:(side==='buy'?'Beli ':'Jual ')+k,amount:money(side==='buy'?a:a*c.price),time:new Date().toLocaleString('id-ID',{day:'numeric',month:'short',year:'numeric',hour:'2-digit',minute:'2-digit'}),status:'Selesai',dot:side==='buy'?'green':'red'});state.points+=10;save();render();showToast('Order berhasil diproses')}
-function openWallet(){openModal('Wallet',`<p style="color:var(--muted)">Saldo IDR: <b>${money(state.balance.idr)}</b></p><button class="full buybtn" onclick="deposit()">+ Deposit IDR</button><br><br><button class="full sellbtn" onclick="withdraw()">− Withdraw IDR</button><hr style="border-color:var(--line)">`)}
-function deposit(){openModal('Deposit IDR',`<p style="color:var(--muted)">Pilih metode deposit</p><button class="deposit-method" style="width:100%;margin-bottom:8px" onclick="depositMethod('Bank Transfer')">🏦 Bank Transfer</button><button class="deposit-method" style="width:100%;margin-bottom:8px" onclick="depositMethod('Virtual Account')">▣ Virtual Account</button><button class="deposit-method" style="width:100%" onclick="depositMethod('E-Wallet')">◉ E-Wallet</button>`)}
-function doDeposit(){const n=Number(document.getElementById('dep').value||0);if(n<=0)return showToast('Nominal tidak valid');state.balance.idr+=n;state.history.unshift({type:'Deposit IDR',amount:money(n),time:new Date().toLocaleString('id-ID'),status:'Selesai',dot:'green'});save();closeModal();render();showToast('Deposit berhasil')}
-function withdraw(){openModal('Withdraw IDR',`<label>Nominal</label><input id="wd" class="input" type="number" value="100000"><button class="full sellbtn" onclick="doWithdraw()">Withdraw</button>`)}
-function doWithdraw(){const n=Number(document.getElementById('wd').value||0);if(n<=0||n>state.balance.idr)return showToast('Saldo  tidak cukup');state.balance.idr-=n;state.history.unshift({type:'Withdraw IDR',amount:money(n),time:new Date().toLocaleString('id-ID'),status:'Selesai',dot:'red'});save();closeModal();render();showToast('Withdraw berhasil')}
-function openHistory(){openModal('Riwayat Transaksi',state.history.map(h=>`<div class="history-item"><span>${h.type}<br><small>${h.time}</small></span><b>${h.amount}</b></div>`).join(''))}
-function profileForm(){return `<label>Nama</label><input class="input" value="${state.user.name}" id="pn"><label>Email</label><input class="input" value="${state.user.email}" id="pe"><button class="full primary" onclick="saveProfile()">Simpan</button>`}
-function saveProfile(){
- const old=state.user.email, name=document.getElementById('pn').value.trim()||state.user.name, email=document.getElementById('pe').value.trim().toLowerCase()||old;
- if(!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(email))return showToast('Email tidak valid');
- if(email!==old && db.accounts[email])return showToast('Email sudah digunakan');
- if(email!==old){delete db.accounts[old];state.user.email=email}
- state.user.name=name;save();closeModal();render();showToast('Profil tersimpan')
-}
-function securityForm(){return `<p>Ubah password akun.</p><label>Password baru</label><input class="input" type="password" id="newPass" placeholder="Password baru"><button class="full primary" onclick="changePassword()">Simpan</button>`}
-function changePassword(){const p=document.getElementById('newPass').value;if(p.length<4)return showToast('Password minimal 4 karakter');state.password=p;save();closeModal();showToast('Password diperbarui')}
-function settingsForm(){return `<label>Mata uang</label><select class="input"><option>IDR</option><option>USD</option></select><label><input type="checkbox" checked> Notifikasi</label><br><button class="full primary" onclick="showToast('Pengaturan tersimpan');closeModal()">Simpan</button>`}
-function openModal(title,body){document.getElementById('modalHost').innerHTML=`<div class="modalback" onclick="if(event.target===this)closeModal()"><div class="modal"><button class="close" onclick="closeModal()">×</button><h2>${title}</h2>${body}</div></div>`}function closeModal(){document.getElementById('modalHost').innerHTML=''}
-function toggleBalance(){balanceVisible=!balanceVisible;render()}
-function showToast(msg){const el=document.createElement('div');el.className='toast';el.textContent=msg;document.getElementById('toastHost').appendChild(el);setTimeout(()=>el.remove(),2600)}
-function go(id){document.querySelectorAll('.page>section,.grid>div').forEach(()=>{});const el=document.getElementById(id);if(el){el.scrollIntoView({behavior:'smooth',block:'start'})}document.querySelectorAll('[data-go]').forEach(b=>b.classList.toggle('active',b.dataset.go===id));document.getElementById('profileMenu').classList.add('hidden')}
-document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>go(b.dataset.go));document.getElementById('profileBtn').onclick=()=>document.getElementById('profileMenu').classList.toggle('hidden');document.getElementById('mobileMenu').onclick=()=>document.getElementById('sidebar').style.display=document.getElementById('sidebar').style.display==='block'?'none':'block';
-function logout(){db.current=null;persist();state=null;init();}
-init();
-refreshMarketFromAPI();
-setInterval(refreshMarketFromAPI,60000);
-</script>
-</body></html>
+</script></body></html>
