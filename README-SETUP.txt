@@ -1,28 +1,23 @@
-TRIV - SISTEM DEPOSIT/ADMIN
+TRIV BERFUNGSI FINAL
 
-Fungsi:
-- Member daftar/login.
-- Member memilih bank dari daftar bank Indonesia.
-- Member menyimpan rekening bank untuk withdrawal.
-- Admin menambah, menonaktifkan, dan mengganti tujuan rekening deposit (edit dilakukan dengan menonaktifkan lalu menambah rekening baru).
-- Deposit selalu PENDING.
-- Deposit TIDAK menambah saldo saat diajukan.
-- Admin SETUJUI -> saldo bertambah satu kali.
-- Admin TOLAK -> saldo tetap.
-- Withdrawal mengurangi/menahan saldo saat diajukan; jika admin menolak, saldo dikembalikan.
-- Tidak ada fitur lokasi.
+URL Apps Script sudah diisi di config.js:
+https://script.google.com/macros/s/AKfycbwVQ1aGU6WsJkPppCfYKmC6wCCQM_YMuH05OUqsRtYVLQlv8Fozeo15-uTtFaTj25CjvA/exec
+
+WAJIB:
+1. Upload Code.gs ke project Google Apps Script.
+2. Jalankan setup() satu kali.
+3. Deploy Web App /exec sebagai versi baru.
+4. Execute as: Me; Who has access: Anyone.
+5. Upload config.js, index.html, admin.html ke root GitHub Pages.
+6. Jika Apps Script deployment URL berubah, ubah API_URL di config.js.
+
+ALUR:
+Daftar/Login -> simpan rekening -> deposit PENDING -> saldo tetap -> Admin Approve -> saldo bertambah.
+Admin dapat menambah/menonaktifkan rekening tujuan deposit.
+Withdrawal: saldo ditahan ketika diajukan; jika ditolak, saldo dikembalikan.
 
 Admin awal:
 admin@triv.web.id
 TrivAdmin@2026!
 
-Setup:
-1. Buat Google Apps Script.
-2. Tempel Code.gs.
-3. Jalankan fungsi setup() sekali.
-4. Deploy sebagai Web App, Execute as Me, access Anyone.
-5. Ambil URL /exec.
-6. Ganti GANTI_URL_APPS_SCRIPT di index.html dan admin.html.
-7. Upload index.html ke root GitHub Pages.
-8. Upload admin.html.
-9. Untuk uang nyata, sambungkan approval withdrawal ke payment gateway/bank resmi; approve di panel tidak mengirim transfer bank otomatis.
+Tidak ada fitur lokasi.
