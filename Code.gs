@@ -1,227 +1,28 @@
-const SHEETS = {
-  admins: ["email","passwordHash","active","createdAt"],
-  users: ["id","name","email","balance","createdAt"],
-  deposits: ["id","email","bank","amount","reference","status","createdAt","reviewedAt","reviewedBy"],
-  withdrawals: ["id","email","bank","accountNumber","accountHolder","amount","note","status","createdAt","reviewedAt","reviewedBy"],
-  notifications: ["email","title","message","createdAt"]
-};
-
-function setupTrivAdmin() {
-  const ss = SpreadsheetApp.getActive();
-  Object.keys(SHEETS).forEach(function(name) {
-    let s = ss.getSheetByName(name);
-    if (!s) {
-      s = ss.insertSheet(name);
-      s.appendRow(SHEETS[name]);
-    }
-  });
-
-  // Ganti email dan password di bawah sebelum menjalankan fungsi ini.
-  const adminEmail = "admin@triv.web.id";
-  const adminPassword = "TrivAdmin@2026!";
-  const s = ss.getSheetByName("admins");
-  const existing = getRows_("admins").find(r => String(r[0]).toLowerCase() === adminEmail.toLowerCase());
-  if (!existing) {
-    s.appendRow([adminEmail, sha256_(adminPassword), "ACTIVE", new Date()]);
-  }
-}
-
-function doGet(e) {
-  setupSheets_();
-  const p = e.parameter || {};
-  const action = p.action || "";
-  const cb = p.callback || "";
-  try {
-    let result;
-
-    if (action === "admin_login") {
-      result = adminLogin_(p.email, p.passwordHash);
-    } else if (action === "admin_data") {
-      result = adminData_(p.session);
-    } else if (action === "admin_review") {
-      result = adminReview_(p.session, p.type, p.id, p.decision);
-    } else if (action === "admin_logout") {
-      result = {ok:true};
-    } else {
-      result = {ok:false, error:"Aksi tidak dikenal"};
-    }
-
-    return json_(result, cb);
-  } catch (err) {
-    return json_({ok:false, error:String(err)}, cb);
-  }
-}
-
-function adminLogin_(email, passwordHash) {
-  email = String(email || "").trim().toLowerCase();
-  const row = getRows_("admins").find(r =>
-    String(r[0]).toLowerCase() === email &&
-    String(r[1]) === String(passwordHash || "") &&
-    String(r[2]) === "ACTIVE"
-  );
-  if (!row) return {ok:false, error:"Email atau password admin salah"};
-
-  const token = Utilities.getUuid();
-  PropertiesService.getScriptProperties().setProperty(
-    "ADMIN_SESSION_" + token,
-    JSON.stringify({email:email, expires:Date.now()+8*60*60*1000})
-  );
-  return {ok:true, session:token, email:email};
-}
-
-function adminData_(token) {
-  const admin = checkAdmin_(token);
-  if (!admin) return {ok:false, error:"Sesi admin tidak valid atau sudah berakhir"};
-
-  const deposits = getRows_("deposits")
-    .filter(r => String(r[5]) === "PENDING")
-    .map(r => ({
-      id:String(r[0]), email:String(r[1]), bank:String(r[2]),
-      amount:Number(r[3]) || 0, reference:String(r[4] || ""),
-      createdAt:String(r[6] || "")
-    }));
-
-  const withdrawals = getRows_("withdrawals")
-    .filter(r => String(r[7]) === "PENDING")
-    .map(r => ({
-      id:String(r[0]), email:String(r[1]), bank:String(r[2]),
-      accountNumber:String(r[3] || ""), accountHolder:String(r[4] || ""),
-      amount:Number(r[5]) || 0, note:String(r[6] || ""),
-      createdAt:String(r[8] || "")
-    }));
-
-  return {
-    ok:true,
-    admin:admin.email,
-    deposits:deposits.reverse(),
-    withdrawals:withdrawals.reverse()
-  };
-}
-
-function adminReview_(token, type, id, decision) {
-  const admin = checkAdmin_(token);
-  if (!admin) return {ok:false, error:"Sesi admin tidak valid"};
-
-  if (!["deposit","withdrawal"].includes(String(type))) {
-    return {ok:false, error:"Jenis transaksi tidak valid"};
-  }
-  if (!["approve","reject"].includes(String(decision))) {
-    return {ok:false, error:"Keputusan tidak valid"};
-  }
-
-  const sheetName = type === "deposit" ? "deposits" : "withdrawals";
-  const rows = getRows_(sheetName);
-  const index = rows.findIndex(r => String(r[0]) === String(id));
-  if (index < 0) return {ok:false, error:"Transaksi tidak ditemukan"};
-
-  const rowNumber = index + 2;
-  const row = rows[index];
-  const statusColumn = type === "deposit" ? 6 : 8;
-  const reviewedAtColumn = type === "deposit" ? 8 : 10;
-  const reviewedByColumn = type === "deposit" ? 9 : 11;
-
-  if (String(row[statusColumn-1]) !== "PENDING") {
-    return {ok:false, error:"Transaksi sudah diproses"};
-  }
-
-  const newStatus = decision === "approve" ? "APPROVED" : "REJECTED";
-  const sheet = SpreadsheetApp.getActive().getSheetByName(sheetName);
-  sheet.getRange(rowNumber, statusColumn).setValue(newStatus);
-  sheet.getRange(rowNumber, reviewedAtColumn).setValue(new Date());
-  sheet.getRange(rowNumber, reviewedByColumn).setValue(admin.email);
-
-  const memberEmail = String(row[1]);
-
-  if (type === "deposit" && decision === "approve") {
-    changeBalance_(memberEmail, Number(row[3]) || 0);
-    notify_(memberEmail, "Deposit disetujui",
-      "Deposit Rp " + money_(row[3]) + " telah disetujui admin.");
-  } else if (type === "deposit" && decision === "reject") {
-    notify_(memberEmail, "Deposit ditolak",
-      "Deposit Rp " + money_(row[3]) + " ditolak admin.");
-  } else if (type === "withdrawal" && decision === "approve") {
-    notify_(memberEmail, "Withdraw disetujui",
-      "Permintaan WD Rp " + money_(row[5]) + " telah disetujui admin.");
-  } else if (type === "withdrawal" && decision === "reject") {
-    // Dana WD diasumsikan sudah ditahan saat permintaan dibuat.
-    changeBalance_(memberEmail, Number(row[5]) || 0);
-    notify_(memberEmail, "Withdraw ditolak",
-      "Permintaan WD Rp " + money_(row[5]) + " ditolak. Dana dikembalikan ke saldo.");
-  }
-
-  return {ok:true, status:newStatus};
-}
-
-function changeBalance_(email, delta) {
-  const sheet = SpreadsheetApp.getActive().getSheetByName("users");
-  const rows = getRows_("users");
-  const i = rows.findIndex(r => String(r[2]).toLowerCase() === String(email).toLowerCase());
-  if (i < 0) throw new Error("Member tidak ditemukan: " + email);
-  const current = Number(rows[i][3]) || 0;
-  sheet.getRange(i+2, 4).setValue(current + Number(delta));
-}
-
-function notify_(email, title, message) {
-  SpreadsheetApp.getActive().getSheetByName("notifications")
-    .appendRow([email,title,message,new Date()]);
-}
-
-function checkAdmin_(token) {
-  if (!token) return null;
-  const key = "ADMIN_SESSION_" + token;
-  const raw = PropertiesService.getScriptProperties().getProperty(key);
-  if (!raw) return null;
-  const s = JSON.parse(raw);
-  if (!s.expires || Date.now() > Number(s.expires)) {
-    PropertiesService.getScriptProperties().deleteProperty(key);
-    return null;
-  }
-  return {email:s.email};
-}
-
-function setupSheets_() {
-  const ss = SpreadsheetApp.getActive();
-  Object.keys(SHEETS).forEach(function(name) {
-    let s = ss.getSheetByName(name);
-    if (!s) {
-      s = ss.insertSheet(name);
-      s.appendRow(SHEETS[name]);
-    }
-  });
-}
-
-function getRows_(name) {
-  const s = SpreadsheetApp.getActive().getSheetByName(name);
-  if (!s || s.getLastRow() < 2) return [];
-  const values = s.getDataRange().getValues();
-  values.shift();
-  return values;
-}
-
-function sha256_(text) {
-  const bytes = Utilities.computeDigest(
-    Utilities.DigestAlgorithm.SHA_256,
-    String(text),
-    Utilities.Charset.UTF_8
-  );
-  return bytes.map(b => {
-    const v = (b < 0 ? b + 256 : b).toString(16);
-    return v.length === 1 ? "0" + v : v;
-  }).join("");
-}
-
-function money_(n) {
-  return Number(n || 0).toLocaleString("id-ID");
-}
-
-function json_(obj, cb) {
-  const body = JSON.stringify(obj);
-  if (cb) {
-    return ContentService
-      .createTextOutput(cb + "(" + body + ")")
-      .setMimeType(ContentService.MimeType.JAVASCRIPT);
-  }
-  return ContentService
-    .createTextOutput(body)
-    .setMimeType(ContentService.MimeType.JSON);
-}
+const ADMIN_EMAIL="admin@triv.web.id",ADMIN_PASSWORD="TrivAdmin@2026!",H=12;
+const BANKS=["Bank Mandiri", "Bank Rakyat Indonesia (BRI)", "Bank Negara Indonesia (BNI)", "Bank Tabungan Negara (BTN)", "Bank Central Asia (BCA)", "Bank CIMB Niaga", "Bank Danamon", "Bank Permata", "Bank Panin", "Bank Maybank Indonesia", "Bank OCBC NISP", "Bank UOB Indonesia", "Bank Mega", "Bank Sinarmas", "Bank SMBC Indonesia", "Bank Jago", "Bank Neo Commerce", "Bank Seabank Indonesia", "Bank Amar Indonesia", "Bank Aladin Syariah", "Bank Syariah Indonesia (BSI)", "Bank Muamalat Indonesia", "Bank Mega Syariah", "Bank BCA Syariah", "Bank Panin Dubai Syariah", "Bank KB Bukopin Syariah", "Bank Victoria Syariah", "Bank BJB", "Bank BJB Syariah", "Bank Jateng", "Bank Jatim", "Bank Jatim Syariah", "Bank DIY", "Bank BPD Bali", "Bank Sumut", "Bank Sumsel Babel", "Bank Nagari", "Bank Riau Kepri", "Bank Riau Kepri Syariah", "Bank Lampung", "Bank Jambi", "Bank Bengkulu", "Bank Kalbar", "Bank Kalsel", "Bank Kalteng", "Bank Kaltimtara", "Bank Kaltara", "Bank Sulselbar", "Bank Sultra", "Bank Sulteng", "Bank SulutGo", "Bank Maluku Malut", "Bank Papua", "Bank Aceh Syariah", "Bank NTB Syariah", "Bank NTT", "Bank Sahabat Sampoerna", "Bank Woori Saudara", "Bank ICBC Indonesia", "Bank Shinhan Indonesia", "Bank DBS Indonesia", "Bank Citibank Indonesia", "Bank HSBC Indonesia", "Bank Standard Chartered Indonesia"];
+function doGet(e){setup();let a=e.parameter.action||"";if(a=="banks")return J({ok:true,banks:BANKS,destinations:rows("dest").filter(x=>x.active!==false&&x.active!=="false")});
+if(a=="register")return reg(e);if(a=="login")return login(e);if(a=="member")return member(e);if(a=="account")return account(e);
+if(a=="deposit")return deposit(e);if(a=="withdraw")return withdraw(e);if(a=="admin_login")return alogin(e);
+if(a=="admin_data")return adata(e);if(a=="review")return review(e);if(a=="add_dest")return addDest(e);if(a=="disable_dest")return disableDest(e);return J({ok:true});}
+function setup(){let ss=SpreadsheetApp.getActive();let d={admins:["email","pass","active"],users:["id","name","email","pass","balance","bank","accountNumber","accountHolder","createdAt"],dest:["id","bank","accountNumber","accountHolder","label","active","createdAt"],deposits:["id","email","destinationId","bank","amount","reference","status","createdAt","reviewedAt","reviewedBy"],withdrawals:["id","email","bank","accountNumber","accountHolder","amount","note","status","createdAt","reviewedAt","reviewedBy"],notifications:["email","title","message","createdAt"]};
+Object.keys(d).forEach(n=>{let s=ss.getSheetByName(n);if(!s)s=ss.insertSheet(n);if(s.getLastRow()==0)s.appendRow(d[n]);});
+let a=ss.getSheetByName("admins");if(a.getLastRow()==1)a.appendRow([ADMIN_EMAIL,sha(ADMIN_PASSWORD),true]);}
+function reg(e){let em=(e.parameter.email||"").trim().toLowerCase(),p=e.parameter.password||"";if(!em||p.length<6)return J({ok:false,error:"Email dan password minimal 6 karakter."});if(rows("users").some(x=>x.email==em))return J({ok:false,error:"Email sudah terdaftar."});SpreadsheetApp.getActive().getSheetByName("users").appendRow([Utilities.getUuid(),e.parameter.name||"",em,sha(p),0,"","","",new Date()]);return login(e);}
+function login(e){let em=(e.parameter.email||"").trim().toLowerCase(),u=rows("users").find(x=>x.email==em&&x.pass==sha(e.parameter.password||""));if(!u)return J({ok:false,error:"Email atau password salah."});return J({ok:true,token:sess("m",em),user:pub(u)});}
+function member(e){let s=auth(e.parameter.token,"m"),u;if(!s)return J({ok:false,error:"Sesi tidak valid."});u=rows("users").find(x=>x.email==s.email);return J({ok:true,user:pub(u),destinations:rows("dest").filter(x=>x.active!==false&&x.active!=="false"),deposits:rows("deposits").filter(x=>x.email==s.email).reverse(),withdrawals:rows("withdrawals").filter(x=>x.email==s.email).reverse()});}
+function account(e){let s=auth(e.parameter.token,"m");if(!s)return J({ok:false,error:"Sesi tidak valid."});let sh=SpreadsheetApp.getActive().getSheetByName("users"),v=sh.getDataRange().getValues(),h=v[0];for(let i=1;i<v.length;i++)if(v[i][h.indexOf("email")]==s.email){["bank","accountNumber","accountHolder"].forEach(k=>sh.getRange(i+1,h.indexOf(k)+1).setValue(e.parameter[k]||""));break}return J({ok:true});}
+function deposit(e){let s=auth(e.parameter.token,"m"),d=rows("dest").find(x=>x.id==e.parameter.destinationId&&x.active!==false&&x.active!=="false"),a=Number(e.parameter.amount)||0;if(!s||!d||a<=0)return J({ok:false,error:"Data deposit tidak valid."});SpreadsheetApp.getActive().getSheetByName("deposits").appendRow([Utilities.getUuid(),s.email,d.id,d.bank,a,e.parameter.reference||"","pending",new Date(),"",""]);notify(s.email,"Deposit pending","Deposit menunggu persetujuan admin.");return J({ok:true,message:"Deposit pending. Saldo belum bertambah."});}
+function withdraw(e){let s=auth(e.parameter.token,"m"),u=rows("users").find(x=>x.email==s.email),a=Number(e.parameter.amount)||0;if(!s||!u||a<=0||a>Number(u.balance||0))return J({ok:false,error:"Saldo tidak mencukupi."});if(!e.parameter.bank||!e.parameter.accountNumber||!e.parameter.accountHolder)return J({ok:false,error:"Rekening withdrawal belum lengkap."});bal(s.email,-a);SpreadsheetApp.getActive().getSheetByName("withdrawals").appendRow([Utilities.getUuid(),s.email,e.parameter.bank,e.parameter.accountNumber,e.parameter.accountHolder,a,e.parameter.note||"","pending",new Date(),"",""]);return J({ok:true,message:"Withdrawal pending. Saldo ditahan sampai diproses admin."});}
+function alogin(e){let em=(e.parameter.email||"").toLowerCase(),a=rows("admins").find(x=>x.email==em&&x.pass==sha(e.parameter.password||"")&&x.active!==false&&x.active!=="false");if(!a)return J({ok:false,error:"Login admin salah."});return J({ok:true,token:sess("a",em)});}
+function adata(e){if(!auth(e.parameter.token,"a"))return J({ok:false,error:"Sesi admin tidak valid."});return J({ok:true,banks:BANKS,destinations:rows("dest"),deposits:rows("deposits").filter(x=>x.status=="pending"),withdrawals:rows("withdrawals").filter(x=>x.status=="pending")});}
+function review(e){let s=auth(e.parameter.token,"a");if(!s)return J({ok:false,error:"Sesi admin tidak valid."});let n=e.parameter.type=="deposit"?"deposits":"withdrawals",sh=SpreadsheetApp.getActive().getSheetByName(n),v=sh.getDataRange().getValues(),h=v[0],row=-1;for(let i=1;i<v.length;i++)if(v[i][h.indexOf("id")]==e.parameter.id)row=i+1;if(row<0||sh.getRange(row,h.indexOf("status")+1).getValue()!="pending")return J({ok:false,error:"Transaksi tidak ditemukan atau sudah diproses."});let em=sh.getRange(row,h.indexOf("email")+1).getValue(),a=Number(sh.getRange(row,h.indexOf("amount")+1).getValue());sh.getRange(row,h.indexOf("status")+1).setValue(e.parameter.decision=="approve"?"approved":"rejected");sh.getRange(row,h.indexOf("reviewedAt")+1).setValue(new Date());sh.getRange(row,h.indexOf("reviewedBy")+1).setValue(s.email);if(n=="deposits"&&e.parameter.decision=="approve")bal(em,a);if(n=="withdrawals"&&e.parameter.decision=="reject")bal(em,a);notify(em,"Status transaksi","Transaksi "+e.parameter.id+" "+e.parameter.decision);return J({ok:true});}
+function addDest(e){if(!auth(e.parameter.token,"a"))return J({ok:false,error:"Sesi admin tidak valid."});SpreadsheetApp.getActive().getSheetByName("dest").appendRow([Utilities.getUuid(),e.parameter.bank,e.parameter.accountNumber,e.parameter.accountHolder,e.parameter.label||"",true,new Date()]);return J({ok:true});}
+function disableDest(e){if(!auth(e.parameter.token,"a"))return J({ok:false,error:"Sesi admin tidak valid."});let sh=SpreadsheetApp.getActive().getSheetByName("dest"),v=sh.getDataRange().getValues(),h=v[0];for(let i=1;i<v.length;i++)if(v[i][h.indexOf("id")]==e.parameter.id)sh.getRange(i+1,h.indexOf("active")+1).setValue(false);return J({ok:true});}
+function bal(em,d){let sh=SpreadsheetApp.getActive().getSheetByName("users"),v=sh.getDataRange().getValues(),h=v[0];for(let i=1;i<v.length;i++)if(v[i][h.indexOf("email")]==em){let c=Number(v[i][h.indexOf("balance")])||0;sh.getRange(i+1,h.indexOf("balance")+1).setValue(c+d);return;}}
+function rows(n){let v=SpreadsheetApp.getActive().getSheetByName(n).getDataRange().getValues(),h=v[0];return v.slice(1).map(r=>{let o={};h.forEach((k,i)=>o[k]=r[i]);return o});}
+function pub(u){return {name:u.name,email:u.email,balance:Number(u.balance||0),bank:u.bank,accountNumber:u.accountNumber,accountHolder:u.accountHolder};}
+function notify(e,t,m){SpreadsheetApp.getActive().getSheetByName("notifications").appendRow([e,t,m,new Date()]);}
+function sha(s){return Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256,s).map(b=>("0"+(b&255).toString(16)).slice(-2)).join("");}
+function sess(t,e){let x=Utilities.getUuid();PropertiesService.getScriptProperties().setProperty("S_"+t+"_"+x,JSON.stringify({email:e,exp:Date.now()+H*3600000}));return x;}
+function auth(x,t){let r=PropertiesService.getScriptProperties().getProperty("S_"+t+"_"+x);if(!r)return null;let s=JSON.parse(r);return Date.now()>s.exp?null:s;}
+function J(o){return ContentService.createTextOutput(JSON.stringify(o)).setMimeType(ContentService.MimeType.JSON);}
