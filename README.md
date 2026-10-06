@@ -1,20 +1,15 @@
-# TRIV.web.id — Crypto Exchange Demo
+# Official Documentation for the Indodax APIs and Streams.
 
-Demo front-end untuk simulasi exchange crypto.
+* Streams, endpoints, parameters, payloads, etc. described in the documents in this repository are considered **official** and **supported**.
+* The use of any other streams, endpoints, parameters, or payloads, etc. is **not supported**; **use them at your own risk and with no guarantees.**
 
-## Fitur
-- Registrasi/login demo
-- Saldo IDR, BTC, ETH, USDT
-- Beli/jual dengan saldo simulasi
-- Deposit & withdrawal simulasi
-- Riwayat transaksi
-- Responsive/mobile friendly
-- Data disimpan di localStorage browser
 
-## Menjalankan
-Buka `index.html` langsung di browser, atau upload seluruh folder ke GitHub Pages/hosting.
-
-## Catatan
-Ini BUKAN exchange uang/crypto nyata. Tidak ada payment gateway, blockchain custody, transfer bank, atau withdrawal nyata. Jangan memasukkan data rahasia ke demo.
-
-Untuk produksi nyata, tambahkan KYC/AML, provider pembayaran/kustodian yang sesuai, keamanan server, reconciliation, audit, dan pemenuhan regulasi yang berlaku.
+Name | Description | Example | Version
+------------ | ------------ | ------------ | ------------
+[Public REST API](./Public-RestAPI.md) | Public API Documentation | |
+[Private REST API](./Private-RestAPI.md) | Private API Documentation | [PHP](./example/Private-RestAPI-php.md) | v2.0.1 
+[Market Data WebSocket](./Marketdata-websocket.md) | Market Data WebSocket Documentation | |
+[Private WebSocket](./Private-websocket.md) | Private WebSocket Documentation | |
+[Deadman Switch](./Deadman-switch.md) | Deadman Switch Documentation | |
+[INDODAX Trade API 2.0](./INDODAX-TradeAPI-2.md) | Official INDODAX Trade API 2.0 Documentation | | 2.0
+[Self-Trade Prevention](./Self-Trade%20Prevention-TradeAPI.md) | Self-Trade Prevention (STP) Documentation | |
